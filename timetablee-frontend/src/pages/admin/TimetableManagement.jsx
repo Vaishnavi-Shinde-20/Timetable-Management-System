@@ -1,4 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, {
+    useCallback,
+    useEffect,
+    useState
+} from "react";
+
 import { useNavigate } from "react-router-dom";
 import api from "../../services/ApiService";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -48,62 +53,10 @@ function TimetableManagement() {
     const [showTeacherTimetable, setShowTeacherTimetable] = useState(false);
 
     // =====================================================
-    // INITIAL LOAD
-    // =====================================================
-
-    useEffect(() => {
-
-        loadAllData();
-
-        const handleTeachersUpdated = () => {
-            loadTeachers();
-        };
-
-        window.addEventListener(
-            "teachersUpdated",
-            handleTeachersUpdated
-        );
-
-        return () => {
-            window.removeEventListener(
-                "teachersUpdated",
-                handleTeachersUpdated
-            );
-        };
-
-    }, []);
-
-    // =====================================================
-    // LOAD ALL DATA
-    // =====================================================
-
-    const loadAllData = async () => {
-
-        try {
-
-            await Promise.all([
-                loadTimetables(),
-                loadTeachers(),
-                loadCourses(),
-                loadGrades(),
-                loadBatches()
-            ]);
-
-        } catch (error) {
-
-            console.log(error);
-
-            alert("Unable to load timetable data.");
-
-        }
-
-    };
-
-    // =====================================================
     // LOAD TIMETABLES
     // =====================================================
 
-    const loadTimetables = async () => {
+    const loadTimetables = useCallback(async () => {
 
         try {
 
@@ -125,13 +78,13 @@ function TimetableManagement() {
 
         }
 
-    };
+    }, []);
 
     // =====================================================
     // LOAD TEACHERS
     // =====================================================
 
-    const loadTeachers = async () => {
+    const loadTeachers = useCallback(async () => {
 
         try {
 
@@ -154,13 +107,13 @@ function TimetableManagement() {
 
         }
 
-    };
+    }, []);
 
     // =====================================================
     // LOAD COURSES
     // =====================================================
 
-    const loadCourses = async () => {
+    const loadCourses = useCallback(async () => {
 
         try {
 
@@ -176,17 +129,20 @@ function TimetableManagement() {
 
         } catch (error) {
 
-            console.log(error);
+            console.log(
+                "Unable to load courses:",
+                error
+            );
 
         }
 
-    };
+    }, []);
 
     // =====================================================
     // LOAD GRADES
     // =====================================================
 
-    const loadGrades = async () => {
+    const loadGrades = useCallback(async () => {
 
         try {
 
@@ -202,17 +158,20 @@ function TimetableManagement() {
 
         } catch (error) {
 
-            console.log(error);
+            console.log(
+                "Unable to load grades:",
+                error
+            );
 
         }
 
-    };
+    }, []);
 
     // =====================================================
     // LOAD BATCHES
     // =====================================================
 
-    const loadBatches = async () => {
+    const loadBatches = useCallback(async () => {
 
         try {
 
@@ -228,11 +187,77 @@ function TimetableManagement() {
 
         } catch (error) {
 
-            console.log(error);
+            console.log(
+                "Unable to load batches:",
+                error
+            );
 
         }
 
-    };
+    }, []);
+
+    // =====================================================
+    // LOAD ALL DATA
+    // =====================================================
+
+    const loadAllData = useCallback(async () => {
+
+        try {
+
+            await Promise.all([
+                loadTimetables(),
+                loadTeachers(),
+                loadCourses(),
+                loadGrades(),
+                loadBatches()
+            ]);
+
+        } catch (error) {
+
+            console.log(error);
+
+            alert("Unable to load timetable data.");
+
+        }
+
+    }, [
+        loadTimetables,
+        loadTeachers,
+        loadCourses,
+        loadGrades,
+        loadBatches
+    ]);
+
+    // =====================================================
+    // INITIAL LOAD
+    // =====================================================
+
+    useEffect(() => {
+
+        loadAllData();
+
+        const handleTeachersUpdated = () => {
+            loadTeachers();
+        };
+
+        window.addEventListener(
+            "teachersUpdated",
+            handleTeachersUpdated
+        );
+
+        return () => {
+
+            window.removeEventListener(
+                "teachersUpdated",
+                handleTeachersUpdated
+            );
+
+        };
+
+    }, [
+        loadAllData,
+        loadTeachers
+    ]);
 
     // =====================================================
     // FORM CHANGE
@@ -242,10 +267,10 @@ function TimetableManagement() {
 
         const { name, value } = e.target;
 
-        setFormData({
-            ...formData,
+        setFormData((previousData) => ({
+            ...previousData,
             [name]: value
-        });
+        }));
 
     };
 
@@ -276,7 +301,9 @@ function TimetableManagement() {
 
         if (formData.startTime >= formData.endTime) {
 
-            alert("End time must be after start time.");
+            alert(
+                "End time must be after start time."
+            );
 
             return;
 
@@ -295,19 +322,27 @@ function TimetableManagement() {
                 roomNumber: formData.roomNumber,
 
                 teacher: {
-                    teacherId: Number(formData.teacherId)
+                    teacherId: Number(
+                        formData.teacherId
+                    )
                 },
 
                 course: {
-                    courseId: Number(formData.courseId)
+                    courseId: Number(
+                        formData.courseId
+                    )
                 },
 
                 grade: {
-                    gradeId: Number(formData.gradeId)
+                    gradeId: Number(
+                        formData.gradeId
+                    )
                 },
 
                 batch: {
-                    batchId: Number(formData.batchId)
+                    batchId: Number(
+                        formData.batchId
+                    )
                 }
 
             };
@@ -614,7 +649,7 @@ function TimetableManagement() {
             <div style={styles.mainContainer}>
 
                 {/* ================================================= */}
-                {/* LONG PAGE TITLE CARD */}
+                {/* TITLE CARD */}
                 {/* ================================================= */}
 
                 <div style={styles.titleCard}>
@@ -645,7 +680,6 @@ function TimetableManagement() {
                     </button>
 
                 </div>
-
 
                 {/* ================================================= */}
                 {/* ADD / EDIT FORM */}
@@ -678,7 +712,6 @@ function TimetableManagement() {
                         )}
 
                     </div>
-
 
                     <div style={styles.cardBody}>
 
@@ -735,7 +768,6 @@ function TimetableManagement() {
 
                                 </div>
 
-
                                 {/* ROOM */}
 
                                 <div className="col-md-6 mb-4">
@@ -757,7 +789,6 @@ function TimetableManagement() {
 
                                 </div>
 
-
                                 {/* START TIME */}
 
                                 <div className="col-md-6 mb-4">
@@ -778,7 +809,6 @@ function TimetableManagement() {
 
                                 </div>
 
-
                                 {/* END TIME */}
 
                                 <div className="col-md-6 mb-4">
@@ -798,7 +828,6 @@ function TimetableManagement() {
                                     />
 
                                 </div>
-
 
                                 {/* TEACHER */}
 
@@ -852,7 +881,6 @@ function TimetableManagement() {
 
                                 </div>
 
-
                                 {/* COURSE */}
 
                                 <div className="col-md-6 mb-4">
@@ -905,7 +933,6 @@ function TimetableManagement() {
 
                                 </div>
 
-
                                 {/* GRADE */}
 
                                 <div className="col-md-6 mb-4">
@@ -951,7 +978,6 @@ function TimetableManagement() {
                                     </select>
 
                                 </div>
-
 
                                 {/* BATCH */}
 
@@ -1005,7 +1031,6 @@ function TimetableManagement() {
 
                             </div>
 
-
                             {/* FORM BUTTONS */}
 
                             <div style={styles.formActions}>
@@ -1020,7 +1045,6 @@ function TimetableManagement() {
                                         : "✓ Update Timetable"}
 
                                 </button>
-
 
                                 {editingId !== null && (
 
@@ -1041,7 +1065,6 @@ function TimetableManagement() {
                     </div>
 
                 </div>
-
 
                 {/* ================================================= */}
                 {/* VIEW TEACHER TIMETABLE */}
@@ -1064,7 +1087,6 @@ function TimetableManagement() {
                         </div>
 
                     </div>
-
 
                     <div style={styles.cardBody}>
 
@@ -1118,12 +1140,12 @@ function TimetableManagement() {
 
                             </div>
 
-
                             <div className="col-md-5">
 
                                 <div style={styles.teacherActions}>
 
                                     <button
+                                        type="button"
                                         className="btn"
                                         onClick={
                                             handleViewTeacherTimetable
@@ -1136,6 +1158,7 @@ function TimetableManagement() {
                                     </button>
 
                                     <button
+                                        type="button"
                                         className="btn"
                                         onClick={
                                             clearTeacherTimetable
@@ -1148,6 +1171,7 @@ function TimetableManagement() {
                                     </button>
 
                                     <button
+                                        type="button"
                                         className="btn"
                                         onClick={
                                             refreshTeachers
@@ -1168,7 +1192,6 @@ function TimetableManagement() {
                     </div>
 
                 </div>
-
 
                 {/* ================================================= */}
                 {/* PARTICULAR TEACHER TIMETABLE */}
@@ -1193,7 +1216,6 @@ function TimetableManagement() {
                             </div>
 
                         </div>
-
 
                         <div style={styles.cardBody}>
 
@@ -1319,7 +1341,6 @@ function TimetableManagement() {
 
                 )}
 
-
                 {/* ================================================= */}
                 {/* ALL TIMETABLES */}
                 {/* ================================================= */}
@@ -1341,7 +1362,6 @@ function TimetableManagement() {
                         </div>
 
                     </div>
-
 
                     <div style={styles.cardBody}>
 
@@ -1401,7 +1421,6 @@ function TimetableManagement() {
                                         </tr>
 
                                     </thead>
-
 
                                     <tbody>
 
@@ -1471,6 +1490,7 @@ function TimetableManagement() {
                                                     <td style={styles.td}>
 
                                                         <button
+                                                            type="button"
                                                             className="btn btn-sm me-2"
                                                             onClick={() =>
                                                                 handleEdit(
@@ -1484,8 +1504,8 @@ function TimetableManagement() {
                                                             Edit
                                                         </button>
 
-
                                                         <button
+                                                            type="button"
                                                             className="btn btn-sm"
                                                             onClick={() =>
                                                                 handleDelete(
@@ -1532,7 +1552,6 @@ function TimetableManagement() {
 
 }
 
-
 // =====================================================
 // PROFESSIONAL NAVY + SOFT BLUE STYLES
 // =====================================================
@@ -1552,10 +1571,6 @@ const styles = {
         maxWidth: "1180px",
         margin: "0 auto"
     },
-
-    // -------------------------------------------------
-    // LONG TITLE CARD
-    // -------------------------------------------------
 
     titleCard: {
         width: "100%",
@@ -1608,10 +1623,6 @@ const styles = {
             "0 4px 12px rgba(0,0,0,0.12)"
     },
 
-    // -------------------------------------------------
-    // CARD
-    // -------------------------------------------------
-
     card: {
         backgroundColor: "rgba(255,255,255,0.96)",
         borderRadius: "14px",
@@ -1658,10 +1669,6 @@ const styles = {
         fontSize: "12px",
         fontWeight: "700"
     },
-
-    // -------------------------------------------------
-    // FORM
-    // -------------------------------------------------
 
     label: {
         display: "block",
@@ -1713,10 +1720,6 @@ const styles = {
         cursor: "pointer"
     },
 
-    // -------------------------------------------------
-    // TEACHER VIEW BUTTONS
-    // -------------------------------------------------
-
     teacherActions: {
         display: "flex",
         flexWrap: "wrap",
@@ -1752,10 +1755,6 @@ const styles = {
         fontWeight: "600",
         fontSize: "13px"
     },
-
-    // -------------------------------------------------
-    // TABLE
-    // -------------------------------------------------
 
     table: {
         width: "100%",
@@ -1809,10 +1808,6 @@ const styles = {
         fontSize: "12px",
         cursor: "pointer"
     },
-
-    // -------------------------------------------------
-    // MESSAGES
-    // -------------------------------------------------
 
     infoMessage: {
         backgroundColor: "#eef6fd",

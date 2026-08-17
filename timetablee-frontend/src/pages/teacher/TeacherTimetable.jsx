@@ -9,14 +9,10 @@ function TeacherTimetable() {
 
     const [timetable, setTimetable] = useState([]);
 
-    const teacherId = localStorage.getItem("id");
-
-    useEffect(() => {
-        loadTimetable();
-    }, []);
-
     const loadTimetable = async () => {
+
         try {
+
             const teacherId = localStorage.getItem("id");
 
             const response = await api.get(
@@ -34,6 +30,12 @@ function TeacherTimetable() {
         }
 
     };
+
+    useEffect(() => {
+
+        loadTimetable();
+
+    }, []);
 
     return (
 
@@ -63,39 +65,64 @@ function TeacherTimetable() {
 
                 <tbody>
 
-                    {
+                    {timetable.length > 0 ? (
 
-                        timetable.length > 0 ?
+                        timetable.map((row) => (
 
-                            timetable.map((row) => (
+                            <tr key={row.timetableId}>
 
-                                <tr key={row.timetableId}>
+                                <td>
+                                    {row.day}
+                                </td>
 
-                                    <td>{row.day}</td>
-                                    <td>{row.startTime}</td>
-                                    <td>{row.endTime}</td>
-                                    <td>{row.roomNumber}</td>
-                                    <td>{row.course.courseName}</td>
-                                    <td>{row.grade.gradeName}</td>
-                                    <td>{row.batch.batchName}</td>
+                                <td>
+                                    {row.startTime}
+                                </td>
 
-                                </tr>
+                                <td>
+                                    {row.endTime}
+                                </td>
 
-                            ))
+                                <td>
+                                    {row.roomNumber}
+                                </td>
 
-                            :
+                                <td>
+                                    {row.course
+                                        ? row.course.courseName
+                                        : "N/A"}
+                                </td>
 
-                            <tr>
+                                <td>
+                                    {row.grade
+                                        ? row.grade.gradeName
+                                        : "N/A"}
+                                </td>
 
-                                <td colSpan="7" className="text-center">
-
-                                    No Timetable Found
-
+                                <td>
+                                    {row.batch
+                                        ? row.batch.batchName
+                                        : "N/A"}
                                 </td>
 
                             </tr>
 
-                    }
+                        ))
+
+                    ) : (
+
+                        <tr>
+
+                            <td
+                                colSpan="7"
+                                className="text-center"
+                            >
+                                No Timetable Found
+                            </td>
+
+                        </tr>
+
+                    )}
 
                 </tbody>
 
@@ -105,7 +132,9 @@ function TeacherTimetable() {
 
                 <button
                     className="btn btn-secondary"
-                    onClick={() => navigate("/teacher/dashboard")}
+                    onClick={() =>
+                        navigate("/teacher/dashboard")
+                    }
                 >
                     Back
                 </button>

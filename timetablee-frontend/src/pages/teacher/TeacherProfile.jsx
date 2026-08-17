@@ -1,4 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, {
+    useCallback,
+    useEffect,
+    useState
+} from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/ApiService";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -12,15 +16,11 @@ function TeacherProfile() {
 
     const teacherId = localStorage.getItem("id");
 
-    // ==========================================
-    // Load Teacher Profile
-    // ==========================================
+    // =====================================================
+    // LOAD TEACHER PROFILE
+    // =====================================================
 
-    useEffect(() => {
-        loadTeacher();
-    }, []);
-
-    const loadTeacher = async () => {
+    const loadTeacher = useCallback(async () => {
 
         try {
 
@@ -44,11 +44,21 @@ function TeacherProfile() {
 
         }
 
-    };
+    }, [teacherId]);
 
-    // ==========================================
-    // Loading
-    // ==========================================
+    // =====================================================
+    // LOAD PROFILE
+    // =====================================================
+
+    useEffect(() => {
+
+        loadTeacher();
+
+    }, [loadTeacher]);
+
+    // =====================================================
+    // LOADING
+    // =====================================================
 
     if (loading) {
 
@@ -88,11 +98,12 @@ function TeacherProfile() {
 
             </div>
         );
+
     }
 
-    // ==========================================
-    // Profile Not Found
-    // ==========================================
+    // =====================================================
+    // PROFILE NOT FOUND
+    // =====================================================
 
     if (!teacher) {
 
@@ -116,7 +127,8 @@ function TeacherProfile() {
                         borderRadius: "14px",
                         padding: "40px",
                         textAlign: "center",
-                        boxShadow: "0 6px 25px rgba(38,50,74,0.08)"
+                        boxShadow:
+                            "0 6px 25px rgba(38,50,74,0.08)"
                     }}
                 >
 
@@ -162,11 +174,12 @@ function TeacherProfile() {
 
             </div>
         );
+
     }
 
-    // ==========================================
-    // Main Profile
-    // ==========================================
+    // =====================================================
+    // MAIN PROFILE
+    // =====================================================
 
     return (
 
@@ -185,9 +198,9 @@ function TeacherProfile() {
                 }}
             >
 
-                {/* ================================= */}
-                {/* PAGE HEADER */}
-                {/* ================================= */}
+                {/* ================================================= */}
+                {/* HEADER */}
+                {/* ================================================= */}
 
                 <div
                     className="d-flex justify-content-between align-items-center mb-4"
@@ -238,10 +251,9 @@ function TeacherProfile() {
 
                 </div>
 
-
-                {/* ================================= */}
-                {/* MAIN PROFILE CARD */}
-                {/* ================================= */}
+                {/* ================================================= */}
+                {/* PROFILE CARD */}
+                {/* ================================================= */}
 
                 <div
                     style={{
@@ -253,9 +265,9 @@ function TeacherProfile() {
                     }}
                 >
 
-                    {/* ================================= */}
+                    {/* ================================================= */}
                     {/* PROFILE HEADER */}
-                    {/* ================================= */}
+                    {/* ================================================= */}
 
                     <div
                         style={{
@@ -264,11 +276,7 @@ function TeacherProfile() {
                         }}
                     >
 
-                        <div
-                            className="d-flex align-items-center"
-                        >
-
-                            {/* Initial */}
+                        <div className="d-flex align-items-center">
 
                             <div
                                 style={{
@@ -292,7 +300,6 @@ function TeacherProfile() {
                                         .toUpperCase()
                                     : "T"}
                             </div>
-
 
                             <div>
 
@@ -334,10 +341,9 @@ function TeacherProfile() {
 
                     </div>
 
-
-                    {/* ================================= */}
+                    {/* ================================================= */}
                     {/* PROFILE DETAILS */}
-                    {/* ================================= */}
+                    {/* ================================================= */}
 
                     <div
                         style={{
@@ -356,266 +362,67 @@ function TeacherProfile() {
                             Professional Information
                         </h5>
 
-
                         <div className="row g-4">
 
-                            {/* Full Name */}
-
                             <div className="col-md-6">
 
-                                <div
-                                    style={{
-                                        backgroundColor: "#EEF0F7",
-                                        border: "1px solid #E0E3EC",
-                                        borderRadius: "9px",
-                                        padding: "18px 20px"
-                                    }}
-                                >
-
-                                    <div
-                                        style={{
-                                            color: "#687083",
-                                            fontSize: "12px",
-                                            fontWeight: "500",
-                                            textTransform: "uppercase",
-                                            letterSpacing: "0.5px",
-                                            marginBottom: "8px"
-                                        }}
-                                    >
-                                        Full Name
-                                    </div>
-
-                                    <div
-                                        style={{
-                                            color: "#26324A",
-                                            fontSize: "15px",
-                                            fontWeight: "500"
-                                        }}
-                                    >
-                                        {teacher.teacherName ||
-                                            "Not available"}
-                                    </div>
-
-                                </div>
+                                <ProfileField
+                                    title="Full Name"
+                                    value={teacher.teacherName}
+                                />
 
                             </div>
 
-
-                            {/* Email */}
-
                             <div className="col-md-6">
 
-                                <div
-                                    style={{
-                                        backgroundColor: "#EEF0F7",
-                                        border: "1px solid #E0E3EC",
-                                        borderRadius: "9px",
-                                        padding: "18px 20px"
-                                    }}
-                                >
-
-                                    <div
-                                        style={{
-                                            color: "#687083",
-                                            fontSize: "12px",
-                                            fontWeight: "500",
-                                            textTransform: "uppercase",
-                                            letterSpacing: "0.5px",
-                                            marginBottom: "8px"
-                                        }}
-                                    >
-                                        Email Address
-                                    </div>
-
-                                    <div
-                                        style={{
-                                            color: "#26324A",
-                                            fontSize: "15px",
-                                            fontWeight: "500",
-                                            wordBreak: "break-word"
-                                        }}
-                                    >
-                                        {teacher.email ||
-                                            "Not available"}
-                                    </div>
-
-                                </div>
+                                <ProfileField
+                                    title="Email Address"
+                                    value={teacher.email}
+                                />
 
                             </div>
 
-
-                            {/* Phone */}
-
                             <div className="col-md-6">
 
-                                <div
-                                    style={{
-                                        backgroundColor: "#EEF0F7",
-                                        border: "1px solid #E0E3EC",
-                                        borderRadius: "9px",
-                                        padding: "18px 20px"
-                                    }}
-                                >
-
-                                    <div
-                                        style={{
-                                            color: "#687083",
-                                            fontSize: "12px",
-                                            fontWeight: "500",
-                                            textTransform: "uppercase",
-                                            letterSpacing: "0.5px",
-                                            marginBottom: "8px"
-                                        }}
-                                    >
-                                        Phone Number
-                                    </div>
-
-                                    <div
-                                        style={{
-                                            color: "#26324A",
-                                            fontSize: "15px",
-                                            fontWeight: "500"
-                                        }}
-                                    >
-                                        {teacher.phone ||
-                                            "Not available"}
-                                    </div>
-
-                                </div>
+                                <ProfileField
+                                    title="Phone Number"
+                                    value={teacher.phone}
+                                />
 
                             </div>
 
-
-                            {/* Qualification */}
-
                             <div className="col-md-6">
 
-                                <div
-                                    style={{
-                                        backgroundColor: "#EEF0F7",
-                                        border: "1px solid #E0E3EC",
-                                        borderRadius: "9px",
-                                        padding: "18px 20px"
-                                    }}
-                                >
-
-                                    <div
-                                        style={{
-                                            color: "#687083",
-                                            fontSize: "12px",
-                                            fontWeight: "500",
-                                            textTransform: "uppercase",
-                                            letterSpacing: "0.5px",
-                                            marginBottom: "8px"
-                                        }}
-                                    >
-                                        Qualification
-                                    </div>
-
-                                    <div
-                                        style={{
-                                            color: "#26324A",
-                                            fontSize: "15px",
-                                            fontWeight: "500"
-                                        }}
-                                    >
-                                        {teacher.qualification ||
-                                            "Not available"}
-                                    </div>
-
-                                </div>
+                                <ProfileField
+                                    title="Qualification"
+                                    value={teacher.qualification}
+                                />
 
                             </div>
 
-
-                            {/* Specialization */}
-
                             <div className="col-md-6">
 
-                                <div
-                                    style={{
-                                        backgroundColor: "#EEF0F7",
-                                        border: "1px solid #E0E3EC",
-                                        borderRadius: "9px",
-                                        padding: "18px 20px"
-                                    }}
-                                >
-
-                                    <div
-                                        style={{
-                                            color: "#687083",
-                                            fontSize: "12px",
-                                            fontWeight: "500",
-                                            textTransform: "uppercase",
-                                            letterSpacing: "0.5px",
-                                            marginBottom: "8px"
-                                        }}
-                                    >
-                                        Specialization
-                                    </div>
-
-                                    <div
-                                        style={{
-                                            color: "#26324A",
-                                            fontSize: "15px",
-                                            fontWeight: "500"
-                                        }}
-                                    >
-                                        {teacher.specialization ||
-                                            "Not available"}
-                                    </div>
-
-                                </div>
+                                <ProfileField
+                                    title="Specialization"
+                                    value={teacher.specialization}
+                                />
 
                             </div>
 
-
-                            {/* Teacher ID */}
-
                             <div className="col-md-6">
 
-                                <div
-                                    style={{
-                                        backgroundColor: "#EEF0F7",
-                                        border: "1px solid #E0E3EC",
-                                        borderRadius: "9px",
-                                        padding: "18px 20px"
-                                    }}
-                                >
-
-                                    <div
-                                        style={{
-                                            color: "#687083",
-                                            fontSize: "12px",
-                                            fontWeight: "500",
-                                            textTransform: "uppercase",
-                                            letterSpacing: "0.5px",
-                                            marginBottom: "8px"
-                                        }}
-                                    >
-                                        Teacher ID
-                                    </div>
-
-                                    <div
-                                        style={{
-                                            color: "#26324A",
-                                            fontSize: "15px",
-                                            fontWeight: "500"
-                                        }}
-                                    >
-                                        {teacher.teacherId}
-                                    </div>
-
-                                </div>
+                                <ProfileField
+                                    title="Teacher ID"
+                                    value={teacher.teacherId}
+                                />
 
                             </div>
 
                         </div>
 
-
-                        {/* ================================= */}
-                        {/* FOOTER */}
-                        {/* ================================= */}
+                        {/* ================================================= */}
+                        {/* BOTTOM BUTTON */}
+                        {/* ================================================= */}
 
                         <div
                             style={{
@@ -658,6 +465,53 @@ function TeacherProfile() {
         </div>
 
     );
+}
+
+// =====================================================
+// PROFILE FIELD COMPONENT
+// =====================================================
+
+function ProfileField({ title, value }) {
+
+    return (
+
+        <div
+            style={{
+                backgroundColor: "#EEF0F7",
+                border: "1px solid #E0E3EC",
+                borderRadius: "9px",
+                padding: "18px 20px"
+            }}
+        >
+
+            <div
+                style={{
+                    color: "#687083",
+                    fontSize: "12px",
+                    fontWeight: "500",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                    marginBottom: "8px"
+                }}
+            >
+                {title}
+            </div>
+
+            <div
+                style={{
+                    color: "#26324A",
+                    fontSize: "15px",
+                    fontWeight: "500",
+                    wordBreak: "break-word"
+                }}
+            >
+                {value || "Not available"}
+            </div>
+
+        </div>
+
+    );
+
 }
 
 export default TeacherProfile;

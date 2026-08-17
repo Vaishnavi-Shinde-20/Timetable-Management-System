@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/ApiService";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -11,15 +11,17 @@ function StudentProfile() {
 
     const studentId = localStorage.getItem("id");
 
-    useEffect(() => {
-        loadStudent();
-    }, []);
+    // =====================================================
+    // LOAD STUDENT
+    // =====================================================
 
-    const loadStudent = async () => {
+    const loadStudent = useCallback(async () => {
 
         try {
 
-            const response = await api.get(`/api/students/${studentId}`);
+            const response = await api.get(
+                `/api/students/${studentId}`
+            );
 
             setStudent(response.data);
 
@@ -31,19 +33,39 @@ function StudentProfile() {
 
         }
 
-    };
+    }, [studentId]);
+
+    // =====================================================
+    // LOAD PROFILE
+    // =====================================================
+
+    useEffect(() => {
+
+        loadStudent();
+
+    }, [loadStudent]);
+
+    // =====================================================
+    // LOADING
+    // =====================================================
 
     if (!student) {
 
         return (
             <div className="container mt-5">
+
                 <h4 className="text-center">
                     Loading Profile...
                 </h4>
+
             </div>
         );
 
     }
+
+    // =====================================================
+    // UI
+    // =====================================================
 
     return (
 
@@ -70,38 +92,77 @@ function StudentProfile() {
                                 <tbody>
 
                                     <tr>
-                                        <th width="30%">Student ID</th>
-                                        <td>{student.studentId}</td>
+                                        <th width="30%">
+                                            Student ID
+                                        </th>
+
+                                        <td>
+                                            {student.studentId}
+                                        </td>
                                     </tr>
 
                                     <tr>
-                                        <th>Name</th>
-                                        <td>{student.studentName}</td>
+                                        <th>
+                                            Name
+                                        </th>
+
+                                        <td>
+                                            {student.studentName}
+                                        </td>
                                     </tr>
 
                                     <tr>
-                                        <th>Email</th>
-                                        <td>{student.email}</td>
+                                        <th>
+                                            Email
+                                        </th>
+
+                                        <td>
+                                            {student.email}
+                                        </td>
                                     </tr>
 
                                     <tr>
-                                        <th>Phone</th>
-                                        <td>{student.phone}</td>
+                                        <th>
+                                            Phone
+                                        </th>
+
+                                        <td>
+                                            {student.phone}
+                                        </td>
                                     </tr>
 
                                     <tr>
-                                        <th>Roll Number</th>
-                                        <td>{student.rollNumber}</td>
+                                        <th>
+                                            Roll Number
+                                        </th>
+
+                                        <td>
+                                            {student.rollNumber}
+                                        </td>
                                     </tr>
 
                                     <tr>
-                                        <th>Grade</th>
-                                        <td>{student.grade ? student.grade.gradeName : "N/A"}</td>
+                                        <th>
+                                            Grade
+                                        </th>
+
+                                        <td>
+                                            {student.grade
+                                                ? student.grade.gradeName
+                                                : "N/A"}
+                                        </td>
                                     </tr>
 
                                     <tr>
-                                        <th>Batch</th>
-                                        <td>{student.batch ? student.batch.batchName : "N/A"}</td>
+                                        <th>
+                                            Batch
+                                        </th>
+
+                                        <td>
+                                            {student.batch
+                                                ? student.batch.batchName
+                                                : "N/A"}
+                                        </td>
                                     </tr>
 
                                 </tbody>
@@ -112,7 +173,11 @@ function StudentProfile() {
 
                                 <button
                                     className="btn btn-secondary"
-                                    onClick={() => navigate("/student/dashboard")}
+                                    onClick={() =>
+                                        navigate(
+                                            "/student/dashboard"
+                                        )
+                                    }
                                 >
                                     Back to Dashboard
                                 </button>

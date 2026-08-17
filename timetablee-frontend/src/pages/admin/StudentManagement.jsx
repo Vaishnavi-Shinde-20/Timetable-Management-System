@@ -19,7 +19,6 @@ function StudentManagement() {
     const MUTED = "#64748B";
     const WHITE = "#FFFFFF";
     const SUCCESS = "#2E7D6F";
-    const WARNING = "#C58A32";
     const DANGER = "#B84A4A";
 
     // =========================
